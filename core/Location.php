@@ -90,6 +90,7 @@ class Location extends \lithium\core\StaticObject {
 	public static function geocode($location, array $options = array()) {
 		$defaults = array(
 			'all' => false,
+			'raw' => true,
 			'params' => array(
 				'locale' => 'de_DE',
 				'flags' => 'JXTR',
@@ -106,6 +107,16 @@ class Location extends \lithium\core\StaticObject {
 		$response = json_decode($response, true);
 		$result = Set::extract($response, '/ResultSet/Results[quality]/.');
 
+		if (!$options['raw']) {
+			$map = array(
+				'woeid' => 'woeid',
+				'city' => 'city',
+				'country' => 'country',
+				'countrycode' => 'countrycode',
+			);
+			$result = self::_map($result, $map);
+		}
+
 		$result = (!$options['all'])
 			? current($result)
 			: $result;
@@ -113,35 +124,34 @@ class Location extends \lithium\core\StaticObject {
 		return $result;
 	}
 
-	//function to find country and city from IP address
-	//Developed by Roshan Bhattarai http://roshanbh.com.np
-	public static function byIp($ipAddr) {
-
-		//verify the IP address for the
-		ip2long($ipAddr)== -1 || ip2long($ipAddr) === false ? trigger_error("Invalid IP", E_USER_ERROR) : "";
-		$ipDetail=array(); //initialize a blank array
-
-		//get the XML result from hostip.info
-		$xml = file_get_contents("http://api.hostip.info/?ip=".$ipAddr);
-
-		//get the city name inside the node <gml:name> and </gml:name>
-		preg_match("@<Hostip>(\s)*<gml:name>(.*?)</gml:name>@si",$xml,$match);
-
-		//assing the city name to the array
-		$ipDetail['city']=$match[2]; 
-
-		//get the country name inside the node <countryName> and </countryName>
-		preg_match("@<countryName>(.*?)</countryName>@si",$xml,$matches);
-
-		//assign the country name to the $ipDetail array
-		$ipDetail['country']=$matches[1];
-
-		//get the country name inside the node <countryName> and </countryName>
-		preg_match("@<countryAbbrev>(.*?)</countryAbbrev>@si",$xml,$cc_match);
-		$ipDetail['country_code']=$cc_match[1]; //assing the country code to array
-
-		//return the array containing city, country and country code
-		return $ipDetail;
+	/**
+	 * Manipulates each item of $data using map.
+	 *
+	 * @param array $data i.e. an array of objects.
+	 * @param array $map An array of key method/property/closure pairs.
+	 * @return array The mapped data.
+	 */
+	protected static function _map($data, $map) {
+		$results = array();
+		foreach ($data as $item) {
+			$result = array();
+			foreach ($map as $key => $source) {
+				if (is_string($source) && array_key_exists($source, $item)) {
+					$result[$key] = $item[$source];
+				} elseif (is_callable($source)) {
+					$result[$key] = $source($item);
+				} elseif (is_callable(array($this, $source))) {
+					$result[$key] = $this->{$source}($item);
+				} elseif(is_object($item)) {
+					$result[$key] = $item->{$source};
+				} else {
+					$result[$key] = $item[$source];
+				}
+			}
+			if ($result) {
+				$results[] = $result;
+			}
+		}
+		return $results;
 	}
-
 }

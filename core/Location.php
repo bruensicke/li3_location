@@ -15,9 +15,20 @@ class Location extends \lithium\core\StaticObject {
 	/**
 	 * host of remote endpoint
 	 *
+	 * @see http://developer.yahoo.com/geo/placefinder/
 	 * @var string
 	 */
 	public static $host = 'where.yahooapis.com';
+
+	/**
+	 * app_id of your yahoo developer program
+	 *
+	 * please signup here:
+	 * http://developer.yahoo.com/dashboard/createKey.html
+	 *
+	 * @var string
+	 */
+	public static $app_id = '[yourappidhere]';
 
 	/**
 	 * Controls how long to wait for remote endpoint
@@ -43,7 +54,7 @@ class Location extends \lithium\core\StaticObject {
 				'locale' => 'de_DE',
 				'flags' => 'JXTR',
 				'gflags' => 'L',
-				'appid' => '[yourappidhere]',
+				'appid' => static::$app_id,
 			),
 		);
 		$options = Set::merge($defaults, $options);
@@ -66,7 +77,7 @@ class Location extends \lithium\core\StaticObject {
 				'locale' => 'de_DE',
 				'flags' => 'JXTR',
 				'gflags' => 'LR',
-				'appid' => '[yourappidhere]',
+				'appid' => static::$app_id,
 			),
 		);
 		$options = Set::merge($defaults, $options);
@@ -95,7 +106,7 @@ class Location extends \lithium\core\StaticObject {
 				'locale' => 'de_DE',
 				'flags' => 'JXTR',
 				'gflags' => 'L',
-				'appid' => '[yourappidhere]',
+				'appid' => static::$app_id,
 			),
 		);
 		$options = Set::merge($defaults, $options);

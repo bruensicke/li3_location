@@ -116,22 +116,24 @@ class Location extends \lithium\core\StaticObject {
 			return false;
 		}
 		$response = json_decode($response, true);
+		if (!is_array($response)) {
+			return false;
+		}
 		$result = Set::extract($response, '/ResultSet/Results[quality]/.');
 
 		if (!$options['raw']) {
 			$map = array(
 				'woeid' => 'woeid',
 				'city' => 'city',
+				'zip' => 'uzip',
 				'country' => 'country',
 				'countrycode' => 'countrycode',
 			);
 			$result = self::_map($result, $map);
 		}
-
 		$result = (!$options['all'])
 			? current($result)
 			: $result;
-
 		return $result;
 	}
 

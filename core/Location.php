@@ -35,7 +35,7 @@ class Location extends \lithium\core\StaticObject {
 	 *
 	 * @var integer
 	 */
-	public static $timeout = 2;
+	public static $timeout = 10;
 
 	/**
 	 * Finds lat/lon for locations

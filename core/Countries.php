@@ -2,10 +2,6 @@
 
 namespace li3_location\core;
 
-
-use lithium\util\Set;
-use lithium\net\http\Service;
-
 /**
  * A list of Countries and their iso-codes
  *
@@ -259,7 +255,7 @@ class Countries extends \lithium\core\StaticObject {
 		"EH" =>  "Western Sahara",
 		"YE" =>  "Yemen",
 		"ZM" =>  "Zambia",
-		"ZW" =>  "Zimbabwe",
+		"ZW" =>  "Zimbabwe"
 	);
 
 	/**
@@ -276,5 +272,6 @@ class Countries extends \lithium\core\StaticObject {
 		}
 		return self::$_countries[$isocode];
 	}
-
 }
+
+?>
